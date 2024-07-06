@@ -7,6 +7,14 @@ $ qai how can I scan 192.168.6.1 for the ports 22, 80, 8080
 nmap -p 22,80,8080 192.168.6.1
 ```
 
+## Installation
+
+```bash
+$ go install github.com/mcnull/qai@latest
+```
+
+Or download the latest release from the [releases page](https://github.com/McNull/qai/releases).
+
 ## Usage
 
 ```bash

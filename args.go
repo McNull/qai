@@ -29,9 +29,16 @@ func parseArgs() *Options {
 	url := pflag.StringP("url", "u", defaultOptions.Url, "URL of the ollama service")
 	system := pflag.StringP("system", "s", "", "System message to use for generation")
 	platform := pflag.StringP("os", "o", defaultOptions.Platform, "Operating system")
+	version := pflag.BoolP("version", "v", false, "Print the version and exit")
 
 	// Parse the flags
 	pflag.Parse()
+
+	// If the version flag is set, print the version and exit
+	if *version {
+		fmt.Println(VERSION)
+		os.Exit(0)
+	}
 
 	// After parsing, if system is not set by the user, use the default
 	if *system == "" {

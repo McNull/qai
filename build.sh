@@ -7,7 +7,14 @@ VERSION=$(grep 'var VERSION' version.go | awk '{ print $4 }' | tr -d '"')
 build() {
     local os=$1
     local arch=$2
-    local output_dir="release/${VERSION}/${os}/${arch}"
+
+    local output_os="${os}"
+
+    if [ "${os}" == "darwin" ]; then
+        output_os="macos"
+    fi
+
+    local output_dir="release/${VERSION}/${output_os}/${arch}"
     local output_name="qai"
 
     echo "Building for OS: ${os}, ARCH: ${arch}"
@@ -29,3 +36,8 @@ build darwin amd64
 build darwin arm64
 
 echo "All builds are complete."
+
+# zip each ./release/${VERSION}/${os} directory into ./release/${os}-${VERSION}.zip
+for os in linux macos windows; do
+    zip -r -9 "release/${os}-${VERSION}.zip" "release/${VERSION}/${os}"
+done

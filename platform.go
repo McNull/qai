@@ -1,58 +1,92 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"os/exec"
 	"runtime"
 	"strings"
 )
 
-func getOSVersion() (string, error) {
-	var cmd *exec.Cmd
-
-	switch runtime.GOOS {
-	case "windows":
-		cmd = exec.Command("cmd", "ver")
-	case "linux":
-		cmd = exec.Command("lsb_release", "-d")
-	case "darwin":
-		cmd = exec.Command("sw_vers", "-productVersion")
-	default:
-		return "", fmt.Errorf("unsupported platform")
+func getCmdOutput(cmd string, args ...string) (string, error) {
+	// run the command
+	cmdOut, err := exec.Command(cmd, args...).Output()
+	if err != nil {
+		return "", fmt.Errorf("Failed to run command: %s", err)
 	}
 
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
+	return string(cmdOut), nil
+}
+
+func getLinuxInfo() (string, error) {
+	// grab the ID and VERSION_ID from /etc/os-release
+	cmdOut, err := getCmdOutput("cat", "/etc/os-release")
 	if err != nil {
 		return "", err
 	}
 
-	versionInfo := strings.TrimSpace(out.String())
+	// parse the output
+	var id, version string
+	for _, line := range strings.Split(cmdOut, "\n") {
+		if len(line) == 0 {
+			continue
+		}
 
-	if runtime.GOOS == "linux" {
-		// Extract description from `lsb_release -d` output
-		parts := strings.SplitN(versionInfo, ":", 2)
-		if len(parts) == 2 {
-			versionInfo = strings.TrimSpace(parts[1])
+		if line[0] == '#' {
+			continue
+		}
+
+		kv := strings.Split(line, "=")
+		switch kv[0] {
+		case "ID":
+			id = kv[1]
+		case "VERSION_ID":
+			version = kv[1]
 		}
 	}
 
-	return versionInfo, nil
+	if id == "" || version == "" {
+		return "", fmt.Errorf("Failed to parse /etc/os-release")
+	}
+
+	return fmt.Sprintf("linux %s %s", id, version), nil
+}
+
+func getWindowsInfo() (string, error) {
+	cmdOut, err := getCmdOutput("cmd", "/c", "ver")
+	if err != nil {
+		return "", err
+	}
+
+	version := strings.TrimSpace(cmdOut)
+
+	return version, nil
+}
+
+func getDarwinInfo() (string, error) {
+	// grab the version from sw_vers
+	cmdOut, err := getCmdOutput("sw_vers", "-productVersion")
+	if err != nil {
+		return "", err
+	}
+
+	version := strings.TrimSpace(cmdOut)
+
+	if version == "" {
+		return "", fmt.Errorf("Failed to parse sw_vers")
+	}
+
+	return fmt.Sprintf("macos %s", version), nil
 }
 
 func getPlatform() (string, error) {
-	version, err := getOSVersion()
-	if err != nil {
-		return runtime.GOOS, err
+	switch runtime.GOOS {
+	case "linux":
+		return getLinuxInfo()
+	case "windows":
+		return getWindowsInfo()
+	case "darwin":
+		return getDarwinInfo()
+	default:
+		return "", fmt.Errorf("Unsupported platform")
 	}
-
-	name := runtime.GOOS
-
-	if name == "darwin" {
-		name = "macOS"
-	}
-
-	return name + " " + version, nil
 }

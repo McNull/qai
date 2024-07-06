@@ -17,11 +17,18 @@ build() {
     local output_dir="release/${VERSION}/${output_os}/${arch}"
     local output_name="qai"
 
+    if [ "${os}" == "windows" ]; then
+        output_name="qai.exe"
+    fi
+
     echo "Building for OS: ${os}, ARCH: ${arch}"
     mkdir -p "${output_dir}"
     GOOS=${os} GOARCH=${arch} go build -ldflags="-s" -ldflags="-w" -o "${output_dir}/${output_name}"
     echo "Build complete: ${output_dir}/${output_name}"
 }
+
+# Clean up previous builds
+rm -rf release
 
 # Build for Linux x64 and ARM
 build linux amd64

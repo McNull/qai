@@ -106,12 +106,32 @@ $SUDO mkdir -p "$INSTALL_DIR"
 $SUDO cp "$BINARY_PATH" "$DEST_PATH"
 $SUDO chmod +x "$DEST_PATH"
 
-log "Installation completed successfully!"
-log "You can now run 'qai' from your terminal."
 
 # Verify installation
 if command -v qai >/dev/null 2>&1; then
-  log "QAI version: $(qai --version)"
+  
+  # Check if the config file exists
+  CONFIG_DIR="$HOME/.config/qai"
+  CONFIG_FILE="$CONFIG_DIR/config.json"
+
+  if [[ ! -d "$CONFIG_DIR" ]]; then
+    log "Creating config directory at $CONFIG_DIR"
+    mkdir -p "$CONFIG_DIR"
+  fi
+
+  if [[ ! -f "$CONFIG_FILE" ]]; then
+    log "Creating default config file at $CONFIG_FILE"
+    qai --create-config
+  fi
+
+  log "Installation completed successfully!"
+  log "You can now run 'qai' from your terminal."
+
+  log "Adjust your config file at $CONFIG_FILE to customize your settings."
+  log "For more information, visit: https://github.com/McNull/qai"
+
 else
+  log "Could not find 'qai' in your PATH."
   log "Note: You may need to add $INSTALL_DIR to your PATH or restart your terminal."
 fi
+

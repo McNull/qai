@@ -2,6 +2,7 @@ package provider
 
 import (
 	"flag"
+	"fmt"
 )
 
 type FlagValues struct {
@@ -43,6 +44,11 @@ func CreateFlagSet(name string, v *FlagValues, exitOnError bool) *flag.FlagSet {
 	}
 
 	fs := flag.NewFlagSet(name, exitRule)
+
+	fs.Usage = func() {
+		fmt.Fprintf(fs.Output(), "Usage: %s [options] (prompt)\n\nOptions:\n", name)
+		fs.PrintDefaults()
+	}
 
 	fs.StringVar(&v.ConfigFile, "config", v.ConfigFile, "Path to the config file")
 	fs.BoolVar(&v.CreateConfig, "create-config", v.CreateConfig, "Create a new config file with default values")

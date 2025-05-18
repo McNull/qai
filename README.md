@@ -12,8 +12,6 @@ You can install `qai` using one of the following methods:
 
 ### Using the install script (Linux/MacOS)
 ```bash
-### Using the install script (Linux/macOS)
-```bash
 curl -fsSL https://raw.githubusercontent.com/McNull/qai/main/install.sh | bash
 ```
 
@@ -28,7 +26,9 @@ Download the latest release from the [releases page](https://github.com/McNull/q
 ## Usage
 
 ```bash
-Usage of qai:
+Usage: qai [options] (prompt)
+
+Options:
   -color
         Enable colored output (default true)
   -config string
@@ -52,7 +52,10 @@ Usage of qai:
 ```
 
 ## Providers
-Currently supports `ollama` and `github` providers. The behavior of the providers can be configured in the config file.
+Currently supports `ollama` and `github` providers. 
+The behavior of the providers can be configured in the config file.
+
+The `github` provider requires a GitHub auth token. You can create a new token using the `-github-login` flag, which will open a browser window for you to log in and create a new token.
 
 ## Config
 Default configuration file is `~/.config/qai/config.json`. 

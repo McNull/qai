@@ -9,7 +9,7 @@ var DEFAULT_CONFIG_FILEPATH string
 
 const (
 	APP_NAME              = "qai"
-	APP_VERSION           = "0.5.0"
+	APP_VERSION           = "0.5.1"
 	DEFAULT_PROFILE       = "default"
 	DEFAULT_SYSTEM_PROMPT = "The user is running a terminal in the following environment: {{.Platform}}.\nYour responses are {{.Verbose}}."
 )

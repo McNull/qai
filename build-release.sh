@@ -54,3 +54,33 @@ for os in linux macos windows; do
 done
 
 tree -h release
+
+# Prompt user for confirmation before uploading to GitHub
+echo "The following files will be uploaded to GitHub:"
+ls -lh release/qai-${VERSION}-*.zip
+echo "Do you want to continue? (y/n)"
+read -r confirm
+if [[ ! $confirm =~ ^[yY]$ ]]; then
+    echo "Aborting release process."
+    exit 1
+fi
+
+# Create GitHub release
+echo "Creating GitHub release v${VERSION}..."
+
+# Check if GitHub CLI is installed
+if ! command -v gh &> /dev/null; then
+    echo "Error: GitHub CLI (gh) is not installed. Please install it first."
+    echo "Visit https://cli.github.com/ for installation instructions."
+    exit 1
+fi
+
+# Create the release and upload assets
+gh release create "v${VERSION}" \
+    --title "QAI v${VERSION}" \
+    --notes "Release version ${VERSION}" \
+    "release/qai-${VERSION}-linux.zip" \
+    "release/qai-${VERSION}-macos.zip" \
+    "release/qai-${VERSION}-windows.zip"
+
+echo "GitHub release created successfully!"

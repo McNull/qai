@@ -8,12 +8,22 @@ nmap -p 22,80,8080 192.168.6.1
 ```
 
 ## Installation
+You can install `qai` using one of the following methods:
 
+### Using the install script (Linux/MacOS)
 ```bash
-$ go install github.com/mcnull/qai@latest
+### Using the install script (Linux/macOS)
+```bash
+curl -fsSL https://raw.githubusercontent.com/McNull/qai/main/install.sh | bash
 ```
 
-Or download the latest release from the [releases page](https://github.com/McNull/qai/releases).
+### Using Go
+```bash
+go install github.com/mcnull/qai@latest
+```
+
+### Manual Installation
+Download the latest release from the [releases page](https://github.com/McNull/qai/releases).
 
 ## Usage
 

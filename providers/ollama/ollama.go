@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
 	"github.com/mcnull/qai/shared/provider"
 )
 
@@ -80,13 +81,18 @@ func (p *OllamaProvider) Generate(ctx context.Context, request provider.Generate
 		}
 		defer resp.Body.Close()
 
-		// Use json.Decoder instead of bufio.Scanner
-		// This avoids the buffer size limitation
+		// Check for non-200 status code
+		if resp.StatusCode != http.StatusOK {
+			body, _ := io.ReadAll(resp.Body)
+			errorChan <- fmt.Errorf("error response from server: %s", body)
+			return
+		}
+
 		decoder := json.NewDecoder(resp.Body)
 
 		for {
-			var ollamaResp GenerateResponse
-			if err := decoder.Decode(&ollamaResp); err != nil {
+			var rawMessage json.RawMessage
+			if err := decoder.Decode(&rawMessage); err != nil {
 				if err == io.EOF {
 					return
 				}
@@ -94,8 +100,14 @@ func (p *OllamaProvider) Generate(ctx context.Context, request provider.Generate
 				return
 			}
 
+			var ollamaResp GenerateResponse
+			if err := json.Unmarshal(rawMessage, &ollamaResp); err != nil {
+				errorChan <- fmt.Errorf("error unmarshaling response: %w", err)
+				return
+			}
+
 			providerResp := provider.GenerateResponse{
-				Raw:      ollamaResp,
+				Raw:      rawMessage,
 				Response: ollamaResp.Response,
 				Done:     ollamaResp.Done,
 			}

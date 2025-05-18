@@ -101,6 +101,8 @@ fi
 
 DEST_PATH="$INSTALL_DIR/qai"
 log "Installing to $DEST_PATH..."
+# ensure the destination directory exists
+$SUDO mkdir -p "$INSTALL_DIR"
 $SUDO cp "$BINARY_PATH" "$DEST_PATH"
 $SUDO chmod +x "$DEST_PATH"
 

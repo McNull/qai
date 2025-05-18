@@ -128,6 +128,7 @@ if command -v qai >/dev/null 2>&1; then
   log "You can now run 'qai' from your terminal."
 
   log "Adjust your config file at $CONFIG_FILE to customize your settings."
+  log "A new config file can be created with 'qai --create-config'."
   log "For more information, visit: https://github.com/McNull/qai"
 
 else

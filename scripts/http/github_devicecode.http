@@ -1,0 +1,14 @@
+
+POST https://github.com/login/device/code
+Accept: application/json
+Content-Type: application/x-www-form-urlencoded
+
+client_id=Iv1.b507a08c87ecfe98
+
+# {
+#   "device_code": "525d7ffe6ac633ffeb4af78c21bd5a2594f6064e",
+#   "user_code": "BDFC-5580",
+#   "verification_uri": "https://github.com/login/device",
+#   "expires_in": 899,
+#   "interval": 5
+# }

@@ -1,0 +1,66 @@
+GET {{$dotenv ECHO_URL}}
+Authorization: Bearer {{$dotenv GITHUB_AUTH_TOKEN}}
+User-Agent: qai
+Accept: application/json
+
+###
+# @name get_github_apitoken
+GET https://api.github.com/copilot_internal/v2/token
+Authorization: Bearer {{$dotenv GITHUB_AUTH_TOKEN}}
+User-Agent: qai
+Accept: application/json
+
+###
+@api_token = {{get_github_apitoken.response.body.token}}
+
+POST {{$dotenv ECHO_URL}}
+User-Agent: qai
+Authorization: Bearer {{api_token}}
+Editor-Version: qai/0.1.0
+Content-Type: application/json
+Copilot-Integration-Id: vscode-chat
+
+{
+    "model": "gpt-4",
+    "temperature": 0.5,
+    "top_p": 1.0,
+    "n": 1,
+    "stream": false,
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are a helpful assistant."
+        },
+        {
+            "role": "user",
+            "content": "What is the capital of France?"
+        }
+    ]
+}
+
+###
+
+POST https://api.githubcopilot.com/chat/completions
+User-Agent: qai
+Authorization: Bearer {{api_token}}
+Editor-Version: qai/0.1.0
+Content-Type: application/json
+Copilot-Integration-Id: vscode-chat
+
+{
+    "model": "gpt-4",
+    "temperature": 0.5,
+    "top_p": 1.0,
+    "n": 1,
+    "stream": false,
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are a helpful assistant."
+        },
+        {
+            "role": "user",
+            "content": "How many fingers am I holding up?"
+        }
+    ]
+}
